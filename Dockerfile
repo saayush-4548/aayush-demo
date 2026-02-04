@@ -1,28 +1,10 @@
-name: Build and Push Docker Image
+FROM ubuntu:22.04
 
-on:
-  push:
-    branches:
-      - main
+RUN apt update && apt install -y python3
 
-jobs:
-  docker:
-    runs-on: ubuntu-latest
+WORKDIR /app
+COPY index.html .
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+EXPOSE 8000
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
-      - name: Build Docker image
-        run: |
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/aayush-demo:latest .
-
-      - name: Push Docker image
-        run: |
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/aayush-demo:latest
+CMD ["python3", "-m", "http.server", "8000"]
